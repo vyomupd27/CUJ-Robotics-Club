@@ -709,9 +709,38 @@
   }
   .social-row a:hover{ background: var(--red); border-color: var(--red); color:#fff; }
 
+  .nav-toggle{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:6px;
+  }
+  .nav-toggle span{
+    width:24px; height:2px;
+    background:#fff;
+    display:block;
+    border-radius:2px;
+  }
+
   @media (max-width: 900px){
-    nav{ padding:14px 20px; }
-    .nav-links{ display:none; }
+    nav{ padding:14px 20px; position:relative; }
+    .nav-toggle{ display:flex; }
+    .nav-links{
+      display:none;
+      position:absolute;
+      top:100%; left:0; right:0;
+      background:#111;
+      flex-direction:column;
+      gap:0;
+      padding:10px 24px;
+      border-top:1px solid rgba(255,255,255,0.08);
+      z-index:50;
+    }
+    .nav-links.open{ display:flex; }
+    .nav-links a{ padding:12px 0; width:100%; }
     .hero-inner{ padding: 40px 24px; }
     .section{ padding: 70px 24px; }
     .features-grid{ grid-template-columns: 1fr; }
@@ -738,6 +767,7 @@
 <div class="nav-right">
 
 </div>
+<button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="ticker-outer">
 <span class="star">★</span>
@@ -1061,6 +1091,7 @@
 <div class="nav-right">
 
 </div>
+<button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <header class="nav-wrap">
   
@@ -1543,6 +1574,18 @@
 
   const params = new URLSearchParams(window.location.search);
   showRoute(params.get('page') || 'home', false);
+
+  // ---------- Mobile hamburger menu ----------
+  document.querySelectorAll('.nav-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btn.closest('nav').querySelector('.nav-links').classList.toggle('open');
+    });
+  });
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.addEventListener('click', function(){
+      a.closest('.nav-links').classList.remove('open');
+    });
+  });
 })();
 </script>
 </body>
