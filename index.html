@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Robotics Club — CUJ x e-Yantra</title>
+<style>
+  /* ---------- SINGLE-PAGE TEAM ROUTE ---------- */
+  .team-page-view{
+    display:none;
+    min-height:calc(100vh - 75px);
+    background:var(--bg);
+  }
+  body.team-route #home-content{ display:none; }
+  body.team-route .team-page-view{ display:block; }
+  .team-page-inner{ max-width:1280px; margin:0 auto; padding:72px 60px 100px; }
+  .team-page-topbar{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:30px;
+    margin-bottom:30px;
+  }
+  .team-page-topbar h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(42px,6vw,76px);
+    line-height:1; letter-spacing:-2px;
+  }
+  .team-page-topbar h1 em{font-style:normal;color:var(--red);}
+  .team-page-topbar p{margin-top:16px;color:var(--text-sub);font-size:16px;line-height:1.6;max-width:650px;}
+  .team-page-tenure{margin:0;flex-shrink:0;}
+  #current-team-page, #past-team-page{padding-left:0;padding-right:0;padding-top:35px;}
+  .team-page-view .section{max-width:none;margin:0;padding:0;}
+  .team-page-view .section-head{text-align:left;max-width:760px;margin:0 0 45px;}
+  .team-page-view .section-head h2{font-size:0;}
+  .team-page-view .section-head p{display:none;}
+  .team-page-view .team-row-label{text-align:left;}
+  .team-page-view .team-grid{margin-bottom:45px;}
+  .team-page-view .team-grid.two-col, .team-page-view .team-grid.one-col{margin-left:auto;margin-right:auto;}
+  @media(max-width:900px){
+    .team-page-inner{padding:55px 24px 80px;}
+    .team-page-topbar{align-items:flex-start;flex-direction:column;}
+    .team-page-tenure{margin:5px 0 0;}
+    .team-page-view .team-row-label{text-align:center;}
+  }
+
+  /* ---------- SINGLE-PAGE EVENTS ROUTE ---------- */
+  .events-page-view{
+    display:none;
+    min-height:calc(100vh - 75px);
+    background:var(--bg);
+  }
+  body.events-route #home-content{ display:none; }
+  body.events-route .events-page-view{ display:block; }
+  .events-page-inner{ max-width:1280px; margin:0 auto; padding:60px 60px 100px; }
+  .events-page-inner .eyebrow{
+    font-family: var(--font-display); font-weight:600; font-size:13px;
+    letter-spacing:3px; color: var(--red); margin-bottom:14px; text-align:center;
+  }
+  .events-page-inner h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(34px,5vw,56px);
+    line-height:1.05; letter-spacing:-1.5px; text-align:center; margin-bottom:14px;
+  }
+  .events-page-inner h1 em{font-style:normal;color:var(--red);}
+  .events-page-inner > .events-page-inner-sub{
+    text-align:center;color:var(--text-sub);font-size:16px;line-height:1.6;
+    max-width:620px;margin:0 auto 36px;
+  }
+  .events-filter-row{
+    display:flex; justify-content:center; gap:14px; margin-bottom:48px; flex-wrap:wrap;
+  }
+  .filter-chip{
+    font-family: var(--font-display); font-weight:700; font-size:14px;
+    padding:10px 26px; border-radius:999px; border:1.5px solid var(--border);
+    background:transparent; color:var(--text); cursor:pointer;
+    transition: all .2s ease;
+  }
+  .filter-chip:hover{ border-color:var(--red); color:var(--red); }
+  .filter-chip.active{ border-color:var(--red); background:var(--red); color:#fff; }
+
+  .events-section-title{
+    font-family: var(--font-display); font-weight:800; font-size:clamp(22px,2.6vw,30px);
+    letter-spacing:-0.5px; color: var(--text); margin: 0 0 24px;
+  }
+  .events-section{ margin-bottom:60px; }
+  .events-empty{
+    color:var(--text-sub); font-size:14.5px; padding:18px 4px;
+    border:1px dashed var(--border); border-radius:14px; text-align:center;
+  }
+  .events-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  @media(max-width:900px){ .events-grid{ grid-template-columns:1fr; } }
+
+  .event-card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow:hidden;
+    cursor:pointer;
+    text-align:left;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  .event-card:hover{ transform: translateY(-6px); border-color: var(--red); box-shadow: 0 18px 40px -18px rgba(228,32,42,0.35); }
+  .event-card-banner{
+    position:relative; width:100%; aspect-ratio:1/1;
+    display:flex; align-items:center; justify-content:center;
+    font-size:44px;
+    background: linear-gradient(150deg, var(--black) 0%, #221012 55%, var(--red) 140%);
+    color:#fff;
+  }
+  .event-card-banner-img{ width:100%; height:100%; object-fit:cover; }
+  .event-card-tag{
+    position:absolute; top:14px; right:14px;
+    font-family: var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.8px;
+    background:rgba(255,255,255,0.92); color:var(--black);
+    padding:5px 12px; border-radius:999px; text-transform:uppercase;
+  }
+  .event-card-body{ padding:20px 22px 24px; }
+  .event-card-body h3{ font-family: var(--font-display); font-weight:700; font-size:19px; margin-bottom:8px; }
+  .event-card-meta{ color:var(--text-sub); font-size:13px; margin-bottom:10px; display:flex; gap:14px; flex-wrap:wrap; }
+  .event-card-desc{ color:var(--text-sub); font-size:14px; line-height:1.55; }
+
+  /* ---------- EVENT MODAL ---------- */
+  .event-modal-overlay{
+    display:none; position:fixed; inset:0; z-index:200;
+    background:rgba(10,10,10,0.6);
+    align-items:center; justify-content:center; padding:24px;
+  }
+  .event-modal-overlay.open{ display:flex; }
+  .event-modal{
+    position:relative; width:100%; max-width:560px; max-height:88vh; overflow-y:auto;
+    background: var(--card); border-radius:20px; border:1px solid var(--border);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.5);
+  }
+  .event-modal-close{
+    position:absolute; top:14px; right:14px; z-index:2;
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(0,0,0,0.45); color:#fff; border:none;
+    font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease;
+  }
+  .event-modal-close:hover{ background: var(--red); }
+  .event-modal-banner{
+    width:100%; aspect-ratio:4/5;
+    display:flex; align-items:center; justify-content:center; font-size:64px; color:#fff;
+    background: linear-gradient(150deg, var(--black) 0%, #221012 55%, var(--red) 140%);
+  }
+  .event-modal-banner-img{ width:100%; height:100%; object-fit:contain; }
+  .event-modal-body{ padding:26px 28px 30px; }
+  .event-modal-tag{
+    display:inline-block; font-family: var(--font-display); font-weight:700; font-size:11px;
+    letter-spacing:0.8px; text-transform:uppercase; color:var(--red);
+    background:var(--red-dim); padding:5px 12px; border-radius:999px; margin-bottom:14px;
+  }
+  .event-modal-body h3{ font-family: var(--font-display); font-weight:800; font-size:26px; margin-bottom:14px; }
+  .event-modal-meta{ display:flex; gap:22px; flex-wrap:wrap; color:var(--text-sub); font-size:14px; margin-bottom:8px; }
+  .event-modal-location{ color:var(--text-sub); font-size:14px; margin-bottom:18px; }
+  .event-modal-desc{ color:var(--text-sub); font-size:14.5px; line-height:1.7; margin-bottom:24px; white-space:pre-line; }
+  .event-modal-register{
+    display:inline-block; width:100%; text-align:center;
+    font-family: var(--font-display); font-weight:700; font-size:15px;
+    background: var(--red); color:#fff; padding:14px 20px; border-radius:999px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .event-modal-register:hover{ transform: translateY(-2px); box-shadow: 0 14px 34px -6px rgba(228,32,42,0.5); }
+  .event-modal-register.is-closed{
+    background: var(--border); color: var(--text-sub); cursor:default; pointer-events:none;
+  }
+  @media(max-width:900px){
+    .events-page-inner{ padding:44px 20px 70px; }
+  }
+
+  /* ---------- SINGLE-PAGE CONTACT ROUTE ---------- */
+  .contact-page-view{
+    display:none;
+    min-height:calc(100vh - 75px);
+    background:var(--bg);
+  }
+  body.contact-route #home-content{ display:none; }
+  body.contact-route .contact-page-view{ display:block; }
+  .contact-page-inner{ max-width:1120px; margin:0 auto; padding:60px 60px 100px; }
+  .contact-page-inner .eyebrow{
+    font-family: var(--font-display); font-weight:600; font-size:13px;
+    letter-spacing:3px; color: var(--red); margin-bottom:14px; text-align:center;
+  }
+  .contact-page-inner h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(34px,5vw,56px);
+    line-height:1.05; letter-spacing:-1.5px; text-align:center; margin-bottom:14px;
+  }
+  .contact-page-inner h1 em{font-style:normal;color:var(--red);}
+  .contact-page-inner-sub{
+    text-align:center;color:var(--text-sub);font-size:16px;line-height:1.6;
+    max-width:620px;margin:0 auto 44px;
+  }
+  .contact-table-wrap{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.25);
+  }
+  table.contact-table{ width:100%; border-collapse:collapse; }
+  .contact-table thead th{
+    font-family: var(--font-display); font-weight:700; font-size:12.5px;
+    letter-spacing:1px; text-transform:uppercase; color: var(--text-sub);
+    text-align:left; padding:16px 20px; border-bottom:1px solid var(--border);
+    background: var(--red-dim);
+  }
+  .contact-table tbody td{
+    padding:16px 20px; border-bottom:1px solid var(--border);
+    font-size:14.5px; color: var(--text); vertical-align:middle;
+  }
+  .contact-table tbody tr:last-child td{ border-bottom:none; }
+  .contact-table tbody tr{ transition: background .2s ease; }
+  .contact-table tbody tr:hover{ background: var(--red-dim); }
+  .contact-person{ display:flex; align-items:center; gap:14px; }
+  .contact-avatar{
+    width:44px; height:44px; border-radius:50%; flex-shrink:0;
+    background: linear-gradient(160deg, var(--red-dim), var(--border));
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-display); font-weight:700; font-size:15px; color: var(--red);
+  }
+  .contact-name{ font-family: var(--font-display); font-weight:700; font-size:15px; }
+  .contact-role{ color: var(--text-sub); font-size:12.5px; margin-top:2px; }
+  .contact-icon-link{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:10px;
+    border:1px solid var(--border); background: var(--bg);
+    transition: all .2s ease;
+  }
+  .contact-icon-link:hover{ border-color: var(--red); background: var(--red-dim); transform: translateY(-2px); }
+  .contact-icon-link svg{ width:18px; height:18px; }
+  .contact-email-link{
+    font-family: var(--font-body); font-size:13.5px; color: var(--text-sub);
+    display:inline-flex; align-items:center; gap:8px;
+    transition: color .2s ease;
+  }
+  .contact-email-link:hover{ color: var(--red); }
+  @media(max-width:760px){
+    .contact-page-inner{ padding:44px 16px 70px; }
+    .contact-table thead{ display:none; }
+    .contact-table, .contact-table tbody, .contact-table tr, .contact-table td{ display:block; width:100%; }
+    .contact-table tbody tr{
+      border:1px solid var(--border); border-radius:16px; margin-bottom:14px; padding:14px;
+    }
+    .contact-table tbody td{ border-bottom:none; padding:8px 4px; }
+    .contact-table tbody td::before{
+      content: attr(data-label);
+      display:block; font-family: var(--font-display); font-weight:700; font-size:11px;
+      letter-spacing:0.5px; text-transform:uppercase; color: var(--text-sub); margin-bottom:4px;
+    }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --red: #E4202A;
+    --red-dim: #E4202A22;
+    --black: #0A0A0A;
+    --bg-light: #F2F2F3;
+    --card-light: #FFFFFF;
+    --border-light: rgba(18,18,18,0.10);
+    --text-light: #121212;
+    --text-light-sub: rgba(18,18,18,0.62);
+
+    --bg-dark: #0A0A0A;
+    --card-dark: #141414;
+    --border-dark: rgba(255,255,255,0.10);
+    --text-dark: #F4F4F4;
+    --text-dark-sub: rgba(244,244,244,0.60);
+
+    --bg: var(--bg-light);
+    --card: var(--card-light);
+    --border: var(--border-light);
+    --text: var(--text-light);
+    --text-sub: var(--text-light-sub);
+    --nav-bg: rgba(248,249,250,0.72);
+
+    --font-display: 'Space Grotesk', 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  html.dark{
+    --bg: var(--bg-dark);
+    --card: var(--card-dark);
+    --border: var(--border-dark);
+    --text: var(--text-dark);
+    --text-sub: var(--text-dark-sub);
+    --nav-bg: rgba(10,10,10,0.66);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    transition: background .35s ease, color .35s ease;
+    overflow-x:hidden;
+  }
+  a{text-decoration:none; color:inherit;}
+  ::selection{ background: var(--red); color:#fff; }
+
+  /* ---------- NAV ---------- */
+  header.nav-wrap{
+    position: sticky; top:0; z-index:50;
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 40px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-logos{ display:flex; align-items:center; gap:8px; }
+  .brand-logos img{ height:42px; width:42px; object-fit:contain; border-radius:50%; }
+  .brand-logos img.eyantra-img{ height:26px; width:auto; border-radius:0; object-fit:contain; }
+  .brand-x{ font-family: var(--font-display); font-weight:700; font-size:15px; color: var(--text-sub); }
+  .brand-text{ font-family: var(--font-display); font-weight:700; font-size:15px; letter-spacing:0.5px; line-height:1.15;}
+  .brand-text span{ display:block; color: var(--red); font-size:11.5px; letter-spacing:0.8px; font-weight:600; white-space:nowrap;}
+
+  .nav-links{ display:flex; align-items:center; gap:34px; }
+  .nav-links a{
+    font-family: var(--font-display);
+    font-weight:600; font-size:15px;
+    color: var(--text);
+    position:relative;
+    padding: 4px 2px;
+    transition: color .2s ease;
+  }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-4px; width:0; height:2px;
+    background: var(--red); transition: width .25s ease;
+  }
+  .nav-links a:hover{ color: var(--red); }
+  .nav-links a:hover::after{ width:100%; }
+
+  .nav-right{ display:flex; align-items:center; gap:18px; }
+
+
+  .theme-toggle{
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); background: var(--card);
+    cursor:pointer; font-size:17px;
+    transition: transform .3s ease, background .3s ease;
+  }
+  .theme-toggle:hover{ transform: rotate(20deg) scale(1.06); border-color: var(--red); }
+  body.home-route nav.page-nav{ display:none; }
+
+  /* ---------- TICKER ---------- */
+  .ticker-outer{
+    background: #E6E6E8;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+  html.dark .ticker-outer{ background:#262626; }
+  .ticker-track{
+    display:inline-flex;
+    align-items:center;
+    gap: 60px;
+    padding: 10px 0;
+    animation: ticker-scroll 22s linear infinite;
+    will-change: transform;
+  }
+  @keyframes ticker-scroll{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-50%); }
+  }
+  .ticker-item{
+    font-family: var(--font-display);
+    font-weight:600; font-size:14px;
+    color: #121212;
+    display:flex; align-items:center; gap:8px;
+  }
+  html.dark .ticker-item{ color:#E5E5E5; }
+  .ticker-item .dot{ color: var(--red); font-size:12px; }
+  .star{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--red); font-size:16px; z-index:2; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position: relative;
+    min-height: 78vh;
+    display:flex; align-items:center;
+    overflow:hidden;
+    background: var(--bg);
+  }
+  #network-canvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity: .55;
+  }
+  html.dark #network-canvas{ opacity:.4; }
+
+  .hero-inner{
+    position:relative; z-index:2;
+    padding: 60px 60px 40px 70px;
+    max-width: 1100px;
+  }
+  .eyebrow{
+    font-family: var(--font-display); font-weight:600; font-size:13px;
+    letter-spacing:3px; color: var(--red); margin-bottom:18px;
+  }
+  .headline{
+    font-family: var(--font-display);
+    font-weight:800;
+    font-size: clamp(64px, 11vw, 148px);
+    line-height: 0.94;
+    letter-spacing: -3px;
+    color: var(--text);
+  }
+  .headline .line{ display:block; white-space: nowrap; }
+  .headline .fixed-word{ color: var(--text); display:block; }
+  .headline .dynamic-word{ color: var(--red); display:block; min-height: 1.05em; }
+  .cursor-bar{
+    display:inline-block; width:8px; height:0.82em;
+    background: var(--red);
+    margin-left:8px; vertical-align: -0.06em;
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-sub{
+    margin-top: 26px; font-size: 17px; color: var(--text-sub); max-width: 560px; line-height:1.6;
+  }
+  .hero-cta{ margin-top:34px; display:flex; gap:16px; align-items:center; }
+  .btn-primary{
+    font-family: var(--font-display); font-weight:700; font-size:15px;
+    background: var(--red); color:#fff; padding: 14px 30px; border-radius: 999px;
+    box-shadow: 0 10px 30px -8px rgba(228,32,42,0.55);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 14px 34px -6px rgba(228,32,42,0.65); }
+  .btn-ghost{
+    font-family: var(--font-display); font-weight:700; font-size:15px;
+    color: var(--text); padding: 14px 26px; border-radius:999px; border:1.5px solid var(--border);
+    transition: border-color .25s ease, color .25s ease;
+  }
+  .btn-ghost:hover{ border-color: var(--red); color: var(--red); }
+
+  .scroll-hint{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    font-size:13px; color: var(--text-sub); text-align:center; z-index:2;
+    font-family: var(--font-display); font-weight:500;
+  }
+  .scroll-hint .chev{ display:block; margin-top:6px; animation: bob 1.6s ease-in-out infinite; color: var(--red); }
+  @keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(6px);} }
+
+  /* ---------- GALLERY CAROUSEL ---------- */
+  .gallery{
+    position: relative;
+    width: 100%;
+    height: 560px;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .gallery-track{
+    position: absolute; inset:0;
+  }
+  .gallery-slide{
+    position:absolute; inset:0;
+    opacity:0;
+    transition: opacity .7s ease;
+  }
+  .gallery-slide.active{ opacity:1; }
+  .gallery-slide img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .gallery-slide::after{
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.55) 100%);
+  }
+  .gallery-caption{
+    position:absolute; left:50px; bottom:34px; z-index:3;
+    color:#fff; font-family: var(--font-display); font-weight:600; font-size:15px;
+    letter-spacing:0.5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  }
+  .gallery-arrow{
+    position:absolute; top:50%; transform: translateY(-50%);
+    width:48px; height:48px; border-radius:50%;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color:#fff; font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:4;
+    transition: background .25s ease, border-color .25s ease, transform .25s ease;
+  }
+  .gallery-arrow:hover{ background: var(--red); border-color: var(--red); transform: translateY(-50%) scale(1.08); }
+  .gallery-arrow.prev{ left:22px; }
+  .gallery-arrow.next{ right:22px; }
+  .gallery-dots{
+    position:absolute; bottom:20px; right:40px; z-index:4;
+    display:flex; gap:8px;
+  }
+  .gallery-dot{
+    width:8px; height:8px; border-radius:50%;
+    background: rgba(255,255,255,0.4);
+    cursor:pointer; transition: background .25s ease, width .25s ease;
+  }
+  .gallery-dot.active{ background: var(--red); width:22px; border-radius:5px; }
+
+  /* ---------- ABOUT / VIDEO ---------- */
+  .about-video{
+    padding: 90px 60px;
+    background: var(--bg);
+  }
+  .about-video-inner{
+    max-width:1240px; margin:0 auto;
+    display:grid; grid-template-columns: 1fr 1fr; gap:56px; align-items:center;
+  }
+  .video-frame{
+    position:relative; border-radius:18px; overflow:hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 60px -24px rgba(0,0,0,0.35);
+    background:#000;
+  }
+  .video-frame video{ width:100%; display:block; aspect-ratio: 16/9; object-fit:cover; }
+  .about-text .eyebrow{ margin-bottom:14px; }
+  .about-text h2{
+    font-family: var(--font-display); font-weight:800; font-size: clamp(28px,3.4vw,40px);
+    letter-spacing:-1px; margin-bottom:20px; line-height:1.12;
+  }
+  .about-text h2 em{ font-style:normal; color: var(--red); }
+  .about-text p{ color: var(--text-sub); font-size:16px; line-height:1.75; }
+
+  @media (max-width: 900px){
+    .about-video-inner{ grid-template-columns: 1fr; }
+    .gallery{ height:340px; }
+    .gallery-caption{ left:20px; bottom:20px; font-size:13px; }
+  }
+
+  /* ---------- FEATURES ---------- */
+  .section{ padding: 100px 60px; max-width: 1280px; margin: 0 auto; }
+  .section-head{ text-align:center; max-width:640px; margin: 0 auto 56px; }
+  .section-head h2{
+    font-family: var(--font-display); font-weight:800; font-size: clamp(30px,4vw,44px);
+    letter-spacing:-1px;
+  }
+  .section-head h2 em{ font-style:normal; color: var(--red); }
+  .section-head p{ margin-top:14px; color: var(--text-sub); font-size:16px; line-height:1.6; }
+
+  .features-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:24px;
+  }
+  .feature-card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 34px 28px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .feature-card::before{
+    content:''; position:absolute; top:0; left:0; width:100%; height:3px;
+    background: var(--red); transform: scaleX(0); transform-origin:left;
+    transition: transform .35s ease;
+  }
+  .feature-card:hover{ transform: translateY(-6px); border-color: var(--red); box-shadow: 0 18px 40px -18px rgba(228,32,42,0.35); }
+  .feature-card:hover::before{ transform: scaleX(1); }
+  .feature-icon{
+    width:50px; height:50px; border-radius:14px;
+    background: var(--red-dim); color: var(--red);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; margin-bottom:20px;
+  }
+  .feature-card h3{ font-family: var(--font-display); font-weight:700; font-size:19px; margin-bottom:10px; }
+  .feature-card p{ color: var(--text-sub); font-size:14.5px; line-height:1.65; }
+
+  /* ---------- TEAM ---------- */
+  .team-row-label{
+    text-align:center; font-family: var(--font-display); font-weight:700; font-size:13px;
+    letter-spacing:2px; color: var(--red); margin: 0 0 22px;
+  }
+  .team-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; margin-bottom:56px;
+  }
+  .team-grid:last-of-type{ margin-bottom:0; }
+  .team-grid.two-col{ grid-template-columns: repeat(2, 1fr); max-width: 620px; margin-left:auto; margin-right:auto; margin-bottom:56px; }
+  .team-grid.one-col{ grid-template-columns: 1fr; max-width: 300px; margin-left:auto; margin-right:auto; margin-bottom:56px; }
+  .team-card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow:hidden;
+    text-align:center;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  .team-card:hover{ transform: translateY(-6px); border-color: var(--red); box-shadow: 0 18px 40px -18px rgba(228,32,42,0.35); }
+  .team-photo{
+    width:100%; aspect-ratio: 1/1;
+    background: linear-gradient(160deg, var(--red-dim), var(--border));
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-sub); font-family: var(--font-display); font-size:13px; letter-spacing:1px;
+    overflow:hidden;
+  }
+  .team-photo img{ width:100%; height:100%; object-fit:cover; }
+  .team-info{ padding:20px 16px 24px; }
+  .team-info h3{ font-family: var(--font-display); font-weight:700; font-size:17px; margin-bottom:6px; }
+  .team-info p{ color: var(--red); font-family: var(--font-display); font-weight:600; font-size:13px; letter-spacing:0.5px; }
+
+  /* ---------- STATS STRIP ---------- */
+  .stats-strip{
+    background: var(--black);
+    color:#fff;
+    padding: 56px 60px;
+  }
+  html.dark .stats-strip{ background:#111; }
+  .stats-inner{
+    max-width:1280px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(4,1fr); gap:24px; text-align:center;
+  }
+  .stat h3{ font-family: var(--font-display); font-weight:800; font-size:40px; color: var(--red); }
+  .stat p{ margin-top:6px; font-size:13.5px; letter-spacing:1px; color: rgba(255,255,255,0.65); text-transform:uppercase; }
+
+  /* ---------- REGISTER / CTA ---------- */
+  .register-section{
+    background: linear-gradient(135deg, #150707 0%, #1a0d0d 45%, #0d0d0d 100%);
+    color: #fff;
+    padding: 70px 60px;
+    position: relative;
+    overflow:hidden;
+    border-top: 1px solid var(--border);
+  }
+  .register-section::before{
+    content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px;
+    background: radial-gradient(circle, rgba(228,32,42,0.35), transparent 70%);
+    pointer-events:none;
+  }
+  .register-inner{
+    max-width:1280px; margin:0 auto; position:relative; z-index:1;
+    display:grid; grid-template-columns: 1.1fr 1fr 0.9fr; gap:40px; align-items:center;
+  }
+  .register-brand{ display:flex; flex-direction:column; align-items:flex-start; gap:18px; }
+  .register-brand img{ height:120px; width:120px; border-radius:50%; }
+  .register-brand-text{ font-family: var(--font-display); font-weight:700; font-size:15px; letter-spacing:1px; }
+  .register-brand-sub{ color: rgba(255,255,255,0.6); font-size:13.5px; max-width:280px; line-height:1.6; }
+  .register-socials{ display:flex; gap:12px; flex-wrap:wrap; }
+  .register-socials a{
+    font-family: var(--font-display); font-weight:600; font-size:13px;
+    color: rgba(255,255,255,0.85); border:1px solid rgba(255,255,255,0.2);
+    padding: 7px 14px; border-radius:999px; transition: all .25s ease;
+  }
+  .register-socials a:hover{ background: var(--red); border-color: var(--red); color:#fff; }
+
+  .register-address{ border-left: 1px solid rgba(255,255,255,0.15); padding-left:36px; }
+  .register-address p{ color: rgba(255,255,255,0.75); font-size:14.5px; line-height:1.7; margin-bottom:6px; }
+
+  .register-qr{
+    border-left: 1px solid rgba(255,255,255,0.15); padding-left:36px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
+  }
+  .register-qr h4{ font-family: var(--font-display); font-weight:700; font-size:16px; color:#fff; }
+  .register-qr img{ width:200px; height:auto; border-radius:12px; background:#fff; padding:8px; }
+  .register-qr span{ font-size:12.5px; color: rgba(255,255,255,0.6); }
+
+  .register-bottom{
+    max-width:1280px; margin: 40px auto 0; padding-top:22px;
+    border-top:1px solid rgba(255,255,255,0.12);
+    text-align:center; font-size:13px; color: rgba(255,255,255,0.5);
+  }
+
+  @media (max-width: 900px){
+    .register-inner{ grid-template-columns: 1fr; }
+    .register-address, .register-qr{ border-left:none; padding-left:0; }
+    .team-grid{ grid-template-columns: 1fr; }
+    .team-grid.two-col{ grid-template-columns: 1fr; }
+    .team-grid.one-col{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 60px 60px 30px;
+  }
+  .footer-inner{
+    max-width:1280px; margin:0 auto;
+    display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:40px;
+  }
+  .footer-brand{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .footer-brand img{ height:38px; }
+  .footer-brand-text{ font-family: var(--font-display); font-weight:700; font-size:15px; }
+  footer p.about{ color: var(--text-sub); font-size:14px; line-height:1.6; max-width:320px; }
+  footer h4{ font-family: var(--font-display); font-size:14px; letter-spacing:1px; margin-bottom:16px; color: var(--red); }
+  footer ul{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+  footer ul a{ color: var(--text-sub); font-size:14px; transition: color .2s ease; }
+  footer ul a:hover{ color: var(--red); }
+  .footer-bottom{
+    max-width:1280px; margin: 40px auto 0; padding-top:24px;
+    border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+    color: var(--text-sub); font-size:13px; flex-wrap:wrap; gap:10px;
+  }
+  .social-row{ display:flex; gap:14px; }
+  .social-row a{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+    transition: all .25s ease;
+  }
+  .social-row a:hover{ background: var(--red); border-color: var(--red); color:#fff; }
+
+  @media (max-width: 900px){
+    nav{ padding:14px 20px; }
+    .nav-links{ display:none; }
+    .hero-inner{ padding: 40px 24px; }
+    .section{ padding: 70px 24px; }
+    .features-grid{ grid-template-columns: 1fr; }
+    .stats-inner{ grid-template-columns: repeat(2,1fr); }
+    .footer-inner{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body><div id="home-content"><header class="nav-wrap">
+<nav>
+<div class="brand">
+<div class="brand-logos">
+<img src="images/logo1.jpeg" alt="">
+<span class="brand-x">×</span>
+<img src="images/E-Yantra_logo.png" alt="">
+</div>
+</div>
+<div class="nav-links">
+<a data-route="home" href="?page=home">Home</a>
+<a data-route="team" href="?page=team">Team</a>
+<a data-route="events" href="?page=events">Events</a>
+<a data-route="contact" href="?page=contact">Contact Us</a>
+</div>
+<div class="nav-right">
+
+</div>
+</nav>
+<div class="ticker-outer">
+<span class="star">★</span>
+<div class="ticker-track" id="tickerTrack">
+<!-- duplicated in JS for seamless loop -->
+</div>
+</div>
+</header><section class="hero">
+<canvas id="network-canvas"></canvas>
+<div class="hero-inner">
+<div class="eyebrow">CENTRAL UNIVERSITY OF JAMMU · e-YANTRA</div>
+<h1 class="headline">
+<span class="fixed-word">Build</span><span class="dynamic-word"><span id="typeTarget"></span><span class="cursor-bar"></span></span>
+</h1>
+<p class="hero-sub">We are a community of builders, dreamers and engineers turning bold ideas into working machines — one prototype at a time.</p>
+<div class="hero-cta">
+<a class="btn-primary" href="?page=events">Explore</a>
+<a class="btn-ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSdfVvAW9ODaN8-xjuyXifAGEEzFZp57g_sV9d-dHGvr7CjZIA/viewform">Join the Club</a>
+</div>
+</div>
+<div class="scroll-hint">Scroll Down to Explore More<span class="chev">⌄</span></div>
+</section><section class="gallery" id="gallery">
+<div class="gallery-track" id="galleryTrack"></div>
+<div class="gallery-arrow prev" id="galleryPrev">❮</div>
+<div class="gallery-arrow next" id="galleryNext">❯</div>
+<div class="gallery-caption" id="galleryCaption"></div>
+<div class="gallery-dots" id="galleryDots"></div>
+</section><section class="about-video">
+<div class="about-video-inner">
+<div class="video-frame">
+<video class="your-css-class" controls>
+  <source src="images/grpvid.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+</div>
+<div class="about-text">
+<div class="eyebrow">ABOUT THE CLUB</div>
+<h2>Welcome to the <em>CSE Robotics Club</em>, Central University of Jammu</h2>
+<p>We're a community of students from the Department of Computer Science &amp; Engineering, School of Engineering and Technology, passionate about robotics and automation — powered in partnership with e-Yantra. Through hands-on projects, workshops and competitions like self-balancing bots, line followers and soccer-playing rovers, we explore real approaches to problem solving. Whether you're a first-time builder or a seasoned robotics enthusiast, our club gives you the space to learn, collaborate and push the boundaries of what a small team of students can build. Join us in shaping the future of robotics at CUJ.</p>
+</div>
+</div>
+</section><section class="section" id="team">
+<div class="section-head">
+<h2>Our <em>Team</em></h2>
+<p>The mentors and student leaders behind every build, workshop and competition at the Robotics Club.</p>
+</div>
+<div class="team-row-label">FACULTY MENTORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/harnain.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Harnain Kaur</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/neerendra.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Neerendra Kumar</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/palak.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Palak Mahajan</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT LEADERSHIP</div>
+<div class="team-grid two-col">
+<div class="team-card">
+<div class="team-photo"><img src="images/Samkit.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Samkit Mishra</h3>
+<p>President</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Harsh.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Harsh</h3>
+<p>Vice President</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT ADVISORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/akarsh.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Akarsh</h3>
+<p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Vyom1.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Vyom Upadhyay</h3>
+<p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Durba.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Durba Mahapatra</h3>
+<p>Advisor</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">TECH MENTOR</div>
+<div class="team-grid one-col">
+<div class="team-card">
+<div class="team-photo"><img src="images/kaushal.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Kaushal Kumar</h3>
+<p>Tech Mentor</p>
+</div>
+</div>
+</div>
+</section><section class="register-section">
+<div class="register-inner">
+<div class="register-brand">
+<img src="images/logo1.jpeg" alt="">
+<div class="register-brand-text">ROBOTICS CLUB<br/>CENTRAL UNIVERSITY OF JAMMU</div>
+<div class="register-brand-sub">A student technical club under the Dept. of Computer Science &amp; Engineering, School of Engineering &amp; Technology, in partnership with e-Yantra.</div>
+<div class="register-socials">
+<a href="#">Email</a>
+<a href="https://www.instagram.com/eyantra.cujammu/">Instagram</a>
+<a href="#">LinkedIn</a>
+</div>
+</div>
+<div class="register-address">
+<p>Robotics Club<br/>Dept. of Computer Science &amp; Engineering<br/>School of Engineering &amp; Technology</p>
+<p>Central University of Jammu<br/>Rahya-Suchani (Bagla), Samba<br/>Jammu &amp; Kashmir, 181143</p>
+</div>
+<div class="register-qr">
+<h4>Register Now</h4>
+<img alt="QR" src="images/QR.jpeg"/>
+<span>Scan the QR code to join the club</span>
+</div>
+</div>
+<div class="register-bottom">© 2026 Robotics Club, Central University of Jammu. All rights reserved. · Built by <a href="https://www.linkedin.com/in/vyom-upadhyay-99a680374/" target="_blank" rel="noopener" style="color:var(--red);">Vyom Upadhyay</a></div></section><script>
+  // ---------- Theme toggle disabled: site is dark-mode only ----------
+  document.documentElement.classList.add('dark');
+
+  // ---------- Ticker (duplicate content for seamless right->left loop) ----------
+  const items = [
+    "#Freshers Recruitment Started !",
+    "# Freshers' Orientation 2026 !!",
+    "# Best Tech Club 2025-26",
+    "# Robotics Club Wins",
+    "# CSE Robotics Club"
+  ];
+  const track = document.getElementById('tickerTrack');
+  function buildTicker(){
+    let html = '';
+    for(let rep=0; rep<2; rep++){
+      items.forEach(t => {
+        html += `<span class="ticker-item"><span class="dot">●</span>${t}</span>`;
+      });
+    }
+    track.innerHTML = html;
+  }
+  buildTicker();
+
+  // ---------- Typing animation ----------
+  const words = ["future", "impossible", "ideas"];
+  const target = document.getElementById('typeTarget');
+  let wIndex = 0, cIndex = 0, deleting = false;
+  const TYPE_SPEED = 90, DELETE_SPEED = 55, HOLD_TIME = 1200, GAP_TIME = 300;
+
+  function tick(){
+    const current = words[wIndex];
+    if(!deleting){
+      cIndex++;
+      target.textContent = current.slice(0, cIndex);
+      if(cIndex === current.length){
+        deleting = true;
+        setTimeout(tick, HOLD_TIME);
+        return;
+      }
+      setTimeout(tick, TYPE_SPEED);
+    } else {
+      cIndex--;
+      target.textContent = current.slice(0, cIndex);
+      if(cIndex === 0){
+        deleting = false;
+        wIndex = (wIndex + 1) % words.length;
+        setTimeout(tick, GAP_TIME);
+        return;
+      }
+      setTimeout(tick, DELETE_SPEED);
+    }
+  }
+  tick();
+
+  // ---------- Gallery carousel ----------
+  const gallerySlides = [
+    { src: "images/grp1.jpeg", caption: "Robotics Club team with the National Symposium, CUJ"},
+    { src: "images/grp4.jpeg", caption: "Robo Soccer Arena"},
+    { src: "images/grp3.jpeg", caption: "Soccer-arena test run — line-following & obstacle handling"},
+    { src: "images/grp6.jpeg", caption: "Core Members Team"},
+    { src: "images/grp5.jpeg", caption: "Soccer Match"},
+  ];
+  const galleryTrack = document.getElementById('galleryTrack');
+  const galleryCaption = document.getElementById('galleryCaption');
+  const galleryDots = document.getElementById('galleryDots');
+  let galleryIndex = 0, galleryTimer;
+
+  function buildGallery(){
+    galleryTrack.innerHTML = gallerySlides.map((s,i) =>
+      `<div class="gallery-slide ${i===0?'active':''}" data-i="${i}"><img src="${s.src}" alt=""></div>`
+    ).join('');
+    galleryDots.innerHTML = gallerySlides.map((_,i) =>
+      `<div class="gallery-dot ${i===0?'active':''}" data-i="${i}"></div>`
+    ).join('');
+    galleryCaption.innerHTML = gallerySlides[0].caption;
+    galleryDots.querySelectorAll('.gallery-dot').forEach(dot => {
+      dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.i)));
+    });
+  }
+
+  function goToSlide(i){
+    galleryIndex = (i + gallerySlides.length) % gallerySlides.length;
+    galleryTrack.querySelectorAll('.gallery-slide').forEach(s => s.classList.remove('active'));
+    galleryTrack.querySelector(`.gallery-slide[data-i="${galleryIndex}"]`).classList.add('active');
+    galleryDots.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
+    galleryDots.querySelector(`.gallery-dot[data-i="${galleryIndex}"]`).classList.add('active');
+    galleryCaption.innerHTML = gallerySlides[galleryIndex].caption;
+    resetGalleryTimer();
+  }
+
+  function resetGalleryTimer(){
+    clearInterval(galleryTimer);
+    galleryTimer = setInterval(() => goToSlide(galleryIndex + 1), 5000);
+  }
+
+  document.getElementById('galleryNext').addEventListener('click', () => goToSlide(galleryIndex + 1));
+  document.getElementById('galleryPrev').addEventListener('click', () => goToSlide(galleryIndex - 1));
+
+  buildGallery();
+  resetGalleryTimer();
+
+  // ---------- Network canvas background ----------
+  const canvas = document.getElementById('network-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, points;
+
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+
+  function resize(){
+    const hero = canvas.parentElement;
+    w = canvas.width = hero.offsetWidth;
+    h = canvas.height = hero.offsetHeight;
+    const count = Math.max(28, Math.floor((w*h) / 26000));
+    points = Array.from({length: count}, () => ({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.25,
+      vy: (Math.random()-0.5)*0.25,
+      r: Math.random()*1.6 + 1.4
+    }));
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    const dark = isDark();
+    const lineColor = dark ? 'rgba(255,255,255,' : 'rgba(18,18,18,';
+    const dotColor = dark ? 'rgba(255,255,255,0.85)' : 'rgba(18,18,18,0.85)';
+
+    for(let p of points){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0 || p.x > w) p.vx *= -1;
+      if(p.y < 0 || p.y > h) p.vy *= -1;
+    }
+    for(let i=0;i<points.length;i++){
+      for(let j=i+1;j<points.length;j++){
+        const a = points[i], b = points[j];
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        const maxDist = 150;
+        if(dist < maxDist){
+          const alpha = (1 - dist/maxDist) * 0.5;
+          ctx.strokeStyle = lineColor + alpha + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    for(let p of points){
+      ctx.fillStyle = dotColor;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script></div>
+<nav class="page-nav">
+<div class="brand">
+<div class="brand-logos">
+<img src="images/logo1.jpeg" alt="">
+<span class="brand-x">×</span>
+<img src="images/E-Yantra_logo.png" alt="">
+</div>
+</div>
+<div class="nav-links">
+<a data-route="home" href="?page=home">Home</a>
+<a data-route="team" href="?page=team">Team</a>
+<a data-route="events" href="?page=events">Events</a>
+<a data-route="contact" href="?page=contact">Contact Us</a>
+</div>
+<div class="nav-right">
+
+</div>
+</nav>
+<header class="nav-wrap">
+  
+  
+  
+<div aria-hidden="true" class="events-page-view" id="events-page">
+<div class="events-page-inner">
+<div class="eyebrow">ROBOTICS CLUB • EVENTS</div>
+<h1>Our <em>Events</em></h1>
+<p class="events-page-inner-sub">Workshops, competitions and everything the Robotics Club has hosted — and what's coming next.</p>
+<div class="events-filter-row">
+<button class="filter-chip active" data-filter="all">All</button>
+<button class="filter-chip" data-filter="workshop">Workshop</button>
+<button class="filter-chip" data-filter="competition">Competition</button>
+</div>
+<div class="events-section">
+<h2 class="events-section-title">Upcoming Events</h2>
+<div class="events-grid" id="upcomingEventsGrid"></div>
+<p class="events-empty" id="upcomingEmptyMsg">No upcoming events right now — check back soon!</p>
+</div>
+<div class="events-section">
+<h2 class="events-section-title">Past Events</h2>
+<div class="events-grid" id="pastEventsGrid"></div>
+</div>
+</div>
+</div>
+
+<div class="event-modal-overlay" id="eventModalOverlay">
+<div class="event-modal">
+<button class="event-modal-close" id="eventModalClose" aria-label="Close">&times;</button>
+<div class="event-modal-banner" id="eventModalBanner"></div>
+<div class="event-modal-body">
+<span class="event-modal-tag" id="eventModalTag"></span>
+<h3 id="eventModalTitle"></h3>
+<div class="event-modal-meta">
+<span>📅 <span id="eventModalDate"></span></span>
+<span>🕒 <span id="eventModalTime"></span></span>
+</div>
+<div class="event-modal-location">📍 <span id="eventModalLocation"></span></div>
+<p class="event-modal-desc" id="eventModalDesc"></p>
+<a href="#" class="event-modal-register" id="eventModalRegister" target="_blank" rel="noopener">Register</a>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="contact-page-view" id="contact-page">
+<div class="contact-page-inner">
+<div class="eyebrow">ROBOTICS CLUB • GET IN TOUCH</div>
+<h1>Contact <em>Us</em></h1>
+<p class="contact-page-inner-sub">Reach out to any of our mentors or student leads directly — connect on LinkedIn or drop an email.</p>
+<div class="contact-table-wrap">
+<table class="contact-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>LinkedIn</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody id="contactTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="team-page-view" id="team-page">
+<div class="team-page-inner">
+<div class="team-page-topbar">
+<div>
+<div class="eyebrow">ROBOTICS CLUB • PEOPLE</div>
+<h1>Meet the <em>Team</em></h1>
+<p>Explore the current team and previous team members of the Robotics Club.</p>
+</div>
+<div class="tenure-container team-page-tenure">
+<label class="tenure-label" for="team-tenure-select">Tenure:</label>
+<select class="tenure-select" id="team-tenure-select">
+<option value="current">Current</option>
+<option value="past">Past</option>
+</select>
+</div>
+</div>
+<div id="team-current-view"><section class="section" id="current-team-page">
+<div class="section-head">
+<h2>Our <em>Team</em></h2>
+<p>The mentors and student leaders behind every build, workshop and competition at the Robotics Club.</p>
+</div>
+<div class="team-row-label">FACULTY MENTORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/harnain.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Harnain Kaur</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/neerendra.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Neerendra Kumar</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/palak.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Palak Mahajan</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT LEADERSHIP</div>
+<div class="team-grid two-col">
+<div class="team-card">
+<div class="team-photo"><img src="images/Samkit.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Samkit Mishra</h3>
+<p>President</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Harsh.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Harsh</h3>
+<p>Vice President</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT ADVISORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/akarsh.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Akarsh</h3>
+<p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Vyom1.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Vyom Upadhyay</h3>
+<p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Durba.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Durba Mahapatra</h3>
+<p>Advisor</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">TECH MENTOR</div>
+<div class="team-grid one-col">
+<div class="team-card">
+<div class="team-photo"><img src="images/kaushal.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Kaushal Kumar</h3>
+<p>Tech Mentor</p>
+</div>
+</div>
+</div>
+</section></div>
+<div id="team-past-view" style="display:none"><section class="section" id="past-team-page">
+<div class="section-head">
+<h2>Our <em>Team</em></h2>
+<p>The mentors and student leaders behind every build, workshop and competition at the Robotics Club.</p>
+</div>
+<div class="team-row-label">FACULTY MENTORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/harnain.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Harnain Kaur</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/neerendra.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Neerendra Kumar</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/palak.png" alt=""></div>
+<div class="team-info">
+<h3>Dr. Palak Mahajan</h3>
+<p>Faculty Mentor</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT LEADERSHIP</div>
+<div class="team-grid two-col">
+<div class="team-card">
+<div class="team-photo"><img src="images/Tanmay.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Tanmay Saini</h3>
+<p>President</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Sparsh.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Sparsh Kumar</h3>
+<p>President</p>
+</div>
+</div>
+</div>
+<div class="team-row-label">STUDENT ADVISORS</div>
+<div class="team-grid">
+<div class="team-card">
+<div class="team-photo"><img src="images/Suraj.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Suraj</h3>
+<p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Divyanshu.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Divyanshu Tiwari</h3>
+<p>Tech Mentor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Sanskar.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Sanskar</h3>
+<p>Advisor</p>
+</div>
+</div>
+</div>
+</section></div>
+</div>
+</div>
+
+<script>
+(function(){
+  const teamPage = document.getElementById('team-page');
+  const currentView = document.getElementById('team-current-view');
+  const pastView = document.getElementById('team-past-view');
+  const tenure = document.getElementById('team-tenure-select');
+  const eventsPage = document.getElementById('events-page');
+  const contactPage = document.getElementById('contact-page');
+
+  // Move the supplied current/past team markup into the route view once.
+  // The original home-page Team section stays inside #home-content untouched.
+
+  function setTeamTenure(value){
+    tenure.value = value;
+    currentView.style.display = value === 'current' ? '' : 'none';
+    pastView.style.display = value === 'past' ? '' : 'none';
+  }
+
+  const ROUTES = ['home', 'team', 'events', 'contact'];
+
+  function showRoute(route, push){
+    if(ROUTES.indexOf(route) === -1) route = 'home';
+    ROUTES.forEach(function(r){
+      document.body.classList.toggle(r + '-route', route === r);
+    });
+    teamPage.setAttribute('aria-hidden', route === 'team' ? 'false' : 'true');
+    eventsPage.setAttribute('aria-hidden', route === 'events' ? 'false' : 'true');
+    contactPage.setAttribute('aria-hidden', route === 'contact' ? 'false' : 'true');
+
+    if(route === 'team'){
+      setTeamTenure('current');
+    }
+    if(route === 'events'){
+      renderEvents();
+    }
+    if(route === 'contact'){
+      renderContacts();
+    }
+    if(push) history.pushState({page:route}, '', '?page=' + route);
+    window.scrollTo({top:0, behavior:'auto'});
+  }
+
+  tenure.addEventListener('change', function(){ setTeamTenure(this.value); });
+
+  document.addEventListener('click', function(e){
+    const link = e.target.closest('a[data-route]');
+    if(!link) return;
+    e.preventDefault();
+    showRoute(link.dataset.route, true);
+  });
+
+  window.addEventListener('popstate', function(){
+    const params = new URLSearchParams(window.location.search);
+    showRoute(params.get('page') || 'home', false);
+  });
+
+  /* ---------- EVENTS DATA ----------
+     Add new events here. status: 'upcoming' or 'past'.
+     category: 'workshop' or 'competition'.
+     icon: any emoji shown on the card/banner.
+     registerUrl: '#' if there's no live link yet; registerClosed: true hides the button. */
+  const eventsData = [
+    {
+      id: 'freshers-orientation',
+      title: "Freshers' Orientation",
+      category: 'workshop',
+      status: 'upcoming',
+      date: '9th September, 2026',
+      time: 'TBA',
+      location: 'Pre-Fabricated Building, CUJ',
+      icon: '🎓',
+      image: 'images/fresherorientation.png',
+      description: "A welcome session for all incoming freshers to introduce them to the Robotics Club — our projects, teams and what it takes to get started in robotics at CUJ. Meet the mentors, student leadership and current members.",
+      registerUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdfVvAW9ODaN8-xjuyXifAGEEzFZp57g_sV9d-dHGvr7CjZIA/viewform',
+      registerClosed: false
+    },
+    {
+      id: 'robotraverse',
+      title: 'RoboTraverse',
+      category: 'competition',
+      status: 'upcoming',
+      date: '2026-09-11',
+      time: 'TBA',
+      location: 'Pre-Fabricated Building, CUJ',
+      icon: '🤖',
+      image: 'images/robotraverse.jpeg',
+      description: 'RoboTraverse challenges teams to build and navigate a robot through a tricky obstacle course, testing speed, precision and control under pressure. Open to all members of the Robotics Club.',
+      registerUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfe98bBi9WJXsWf4lTiAoeEpdIazUvNge2ekxIhLXGgt2qPPQ/viewform?usp=send_form',
+      registerClosed: false
+    },
+    {
+      id: 'robosoccer',
+      title: 'Robosoccer',
+      category: 'competition',
+      status: 'past',
+      date: '2026-05-04',
+      time: '10:00 AM - 4:00 PM',
+      location: 'Pre-Fabricated Building, CUJ',
+      icon: '⚽',
+      image: 'images/robosoccer.png',
+      description: 'Robosoccer 2026 pitted custom-built bots against each other on a mini soccer pitch, testing speed, control and strategy. Teams from the Robotics Club battled it out across knockout rounds to be crowned campus champions.',
+      registerUrl: '#',
+      registerClosed: true
+    }
+  ];
+
+  
+
+  function formatDate(iso){
+    const d = new Date(iso + 'T00:00:00');
+    if(isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  function eventCardHTML(ev){
+    const bannerContent = ev.image
+      ? '<img src="' + ev.image + '" alt="' + ev.title + '" class="event-card-banner-img">'
+      : '<span>' + ev.icon + '</span>';
+    return '' +
+      '<div class="event-card" data-id="' + ev.id + '" data-category="' + ev.category + '">' +
+        '<div class="event-card-banner">' +
+          bannerContent +
+          '<span class="event-card-tag">' + ev.category + '</span>' +
+        '</div>' +
+        '<div class="event-card-body">' +
+          '<h3>' + ev.title + '</h3>' +
+          '<div class="event-card-meta"><span>📅 ' + formatDate(ev.date) + '</span><span>📍 ' + ev.location + '</span></div>' +
+          '<p class="event-card-desc">' + ev.description.slice(0, 110) + (ev.description.length > 110 ? '…' : '') + '</p>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderEvents(activeFilter){
+    activeFilter = activeFilter || 'all';
+    const upcomingGrid = document.getElementById('upcomingEventsGrid');
+    const pastGrid = document.getElementById('pastEventsGrid');
+    const upcomingEmpty = document.getElementById('upcomingEmptyMsg');
+
+    const matches = function(ev){ return activeFilter === 'all' || ev.category === activeFilter; };
+
+    const upcoming = eventsData.filter(function(ev){ return ev.status === 'upcoming' && matches(ev); });
+    const past = eventsData.filter(function(ev){ return ev.status === 'past' && matches(ev); });
+
+    upcomingGrid.innerHTML = upcoming.map(eventCardHTML).join('');
+    pastGrid.innerHTML = past.map(eventCardHTML).join('');
+    upcomingEmpty.style.display = upcoming.length ? 'none' : '';
+
+    document.querySelectorAll('.event-card').forEach(function(card){
+      card.addEventListener('click', function(){
+        openEventModal(card.dataset.id);
+      });
+    });
+  }
+
+  document.querySelectorAll('.filter-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      renderEvents(chip.dataset.filter);
+    });
+  });
+
+  function openEventModal(id){
+    const ev = eventsData.find(function(e){ return e.id === id; });
+    if(!ev) return;
+    const eventModalBanner = document.getElementById('eventModalBanner');
+    if(ev.image){
+      eventModalBanner.innerHTML = '<img src="' + ev.image + '" alt="' + ev.title + '" class="event-modal-banner-img">';
+    } else {
+      eventModalBanner.textContent = ev.icon;
+    }
+    document.getElementById('eventModalTag').textContent = ev.category;
+    document.getElementById('eventModalTitle').textContent = ev.title;
+    document.getElementById('eventModalDate').textContent = formatDate(ev.date);
+    document.getElementById('eventModalTime').textContent = ev.time || 'TBA';
+    document.getElementById('eventModalLocation').textContent = ev.location;
+    document.getElementById('eventModalDesc').textContent = ev.description;
+
+    const registerBtn = document.getElementById('eventModalRegister');
+    if(ev.registerClosed){
+      registerBtn.textContent = 'Registration Closed';
+      registerBtn.classList.add('is-closed');
+      registerBtn.removeAttribute('href');
+    }else{
+      registerBtn.textContent = 'Register';
+      registerBtn.classList.remove('is-closed');
+      registerBtn.setAttribute('href', ev.registerUrl || '#');
+    }
+
+    document.getElementById('eventModalOverlay').classList.add('open');
+  }
+
+  function closeEventModal(){
+    document.getElementById('eventModalOverlay').classList.remove('open');
+  }
+
+  document.getElementById('eventModalClose').addEventListener('click', closeEventModal);
+  document.getElementById('eventModalOverlay').addEventListener('click', function(e){
+    if(e.target === this) closeEventModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeEventModal();
+  });
+
+  /* ---------- CONTACT DATA ----------
+     Add or edit people here. linkedin should be a full profile URL.
+     email defaults to a placeholder — swap in real addresses when ready. */
+  const contactData = [
+    { name:'Dr. Harnain Kaur', role:'Faculty Mentor', linkedin:'https://www.linkedin.com/in/dr-harnain-kour-phd-93304583/', email:'harnain.cse@cujammu.ac.in' },
+    { name:'Dr. Neerendra Kumar', role:'Faculty Mentor', linkedin:'https://www.linkedin.com/in/neerendra-kumar-05211016a/', email:'palak.cse@cujammu.ac.in' },
+    { name:'Dr. Palak Mahajan', role:'Faculty Mentor', linkedin:'https://www.linkedin.com/in/dr-palak-mahajan-387047295/', email:'neerendra.csit@cujammu.ac.in' },
+    { name:'Samkit Mishra', role:'President', linkedin:'https://www.linkedin.com/in/samkit-mishra-3871a9383/', email:'samkitwork2233@gmail.com' },
+    { name:'Harsh', role:'Vice President', linkedin:'https://www.linkedin.com/in/harsh-kumar-249915326/', email:'harshkdev12@gmail.com' },
+    { name:'Akarsh', role:'Advisor', linkedin:'https://www.linkedin.com/', email:'Akarshk253@gmail.com' },
+    { name:'Vyom Upadhyay', role:'Advisor', linkedin:'https://www.linkedin.com/in/vyom-upadhyay-99a680374/', email:'vyomupd27@gmail.com' },
+    { name:'Durba Mahapatra', role:'Advisor', linkedin:'https://www.linkedin.com/in/durba-mahapatra/', email:'durbamahapatra6@gmail.com' },
+    { name:'Kaushal Kumar', role:'Tech Mentor', linkedin:'https://www.linkedin.com/in/kaushal-kumar-072739206/', email:'kaushalkumar@duck.com' }
+  ];
+
+  const LINKEDIN_SVG = '<svg viewBox="0 0 24 24" fill="#0A66C2" xmlns="http://www.w3.org/2000/svg"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>';
+  const MAIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v12H3z" stroke-linejoin="round"/><path d="M3 7l9 6 9-6" stroke-linejoin="round"/></svg>';
+
+  function initials(name){
+    return name.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+  }
+
+  function contactRowHTML(person){
+    return '' +
+      '<tr>' +
+        '<td data-label="Name"><div class="contact-person">' +
+          '<div class="contact-avatar">' + initials(person.name) + '</div>' +
+          '<div><div class="contact-name">' + person.name + '</div></div>' +
+        '</div></td>' +
+        '<td data-label="Role"><span class="contact-role">' + person.role + '</span></td>' +
+        '<td data-label="LinkedIn"><a class="contact-icon-link" href="' + person.linkedin + '" target="_blank" rel="noopener" aria-label="' + person.name + ' on LinkedIn">' + LINKEDIN_SVG + '</a></td>' +
+        '<td data-label="Email"><a class="contact-email-link" href="mailto:' + person.email + '">' + MAIL_SVG + ' ' + person.email + '</a></td>' +
+      '</tr>';
+  }
+
+  function renderContacts(){
+    document.getElementById('contactTableBody').innerHTML = contactData.map(contactRowHTML).join('');
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  showRoute(params.get('page') || 'home', false);
+})();
+</script>
+</body>
+</html>
