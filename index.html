@@ -305,6 +305,9 @@
   header.nav-wrap{
     position: sticky; top:0; z-index:50;
   }
+  nav.page-nav{
+    position: sticky; top:0; z-index:60;
+  }
   nav{
     display:flex; align-items:center; justify-content:space-between;
     padding: 14px 40px;
@@ -380,6 +383,8 @@
   html.dark .ticker-item{ color:#E5E5E5; }
   .ticker-item .dot{ color: var(--red); font-size:12px; }
   .star{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--red); font-size:16px; z-index:2; }
+
+  
 
   /* ---------- HERO ---------- */
   .hero{
@@ -718,12 +723,43 @@
     border:none;
     padding:6px;
   }
+  .logo-heading{
+    color: red;
+    font-size: 15px;
+  }
   .nav-toggle span{
     width:24px; height:2px;
     background:#fff;
     display:block;
     border-radius:2px;
   }
+
+.tenure-container{ display:flex; align-items:center; gap:10px; }
+.tenure-label{
+  font-family: var(--font-display);
+  font-size:13px; font-weight:600;
+  letter-spacing:1px; text-transform:uppercase;
+  color: var(--text-sub);
+}
+.tenure-select{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  background-color: var(--card);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%23E4202A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-repeat:no-repeat;
+  background-position: right 16px center;
+  background-size:11px;
+  border:1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight:600; font-size:14px;
+  padding:10px 40px 10px 18px;
+  border-radius:30px;
+  cursor:pointer;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.tenure-select:hover{ border-color: var(--red); }
+.tenure-select:focus{ outline:none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(228,32,42,0.18); }
+.tenure-select option{ background: var(--card); color: var(--text); }
 
   @media (max-width: 900px){
     nav{ padding:14px 20px; position:relative; }
@@ -753,9 +789,9 @@
 <nav>
 <div class="brand">
 <div class="brand-logos">
-<img src="images/logo1.jpeg" alt="">
-<span class="brand-x">×</span>
-<img src="images/E-Yantra_logo.png" alt="">
+<a href="?page=home"><img src="images/logo1.jpeg" alt=""></a>
+<a href="?page=home"><span class="brand-x">×</span></a>
+<a href="?page=home"><h2 class="logo-heading">By eLSI Initiative</h2></a>
 </div>
 </div>
 <div class="nav-links">
@@ -968,7 +1004,7 @@
 
   // ---------- Gallery carousel ----------
   const gallerySlides = [
-    { src: "images/grp1.jpeg", caption: "Robotics Club team with the National Symposium, CUJ"},
+    { src: "images/grp2.jpeg", caption: "Robotics Club team with the National Symposium, CUJ"},
     { src: "images/grp4.jpeg", caption: "Robo Soccer Arena"},
     { src: "images/grp3.jpeg", caption: "Soccer-arena test run — line-following & obstacle handling"},
     { src: "images/grp6.jpeg", caption: "Core Members Team"},
@@ -1077,9 +1113,9 @@
 <nav class="page-nav">
 <div class="brand">
 <div class="brand-logos">
-<img src="images/logo1.jpeg" alt="">
-<span class="brand-x">×</span>
-<img src="images/E-Yantra_logo.png" alt="">
+<a href="?page=home"><img src="images/logo1.jpeg" alt=""></a>
+<a href="?page=home"><span class="brand-x">×</span></a>
+<a href="?page=home"><h2 class="logo-heading">By eLSI Initiative</h2></a>
 </div>
 </div>
 <div class="nav-links">
@@ -1311,17 +1347,17 @@
 </div>
 </div>
 <div class="team-card">
-<div class="team-photo"><img src="images/Divyanshu.jpeg" alt=""></div>
-<div class="team-info">
-<h3>Divyanshu Tiwari</h3>
-<p>Tech Mentor</p>
-</div>
-</div>
-<div class="team-card">
 <div class="team-photo"><img src="images/Sanskar.jpeg" alt=""></div>
 <div class="team-info">
 <h3>Sanskar</h3>
 <p>Advisor</p>
+</div>
+</div>
+<div class="team-card">
+<div class="team-photo"><img src="images/Divyanshu.jpeg" alt=""></div>
+<div class="team-info">
+<h3>Divyanshu Tiwari</h3>
+<p>Tech Mentor</p>
 </div>
 </div>
 </div>
@@ -1400,7 +1436,7 @@
       time: 'TBA',
       location: 'Pre-Fabricated Building, CUJ',
       icon: '🎓',
-      image: 'images/fresherorientation.png',
+      image: 'images/fresherorientation.jpg',
       description: "A welcome session for all incoming freshers to introduce them to the Robotics Club — our projects, teams and what it takes to get started in robotics at CUJ. Meet the mentors, student leadership and current members.",
       registerUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdfVvAW9ODaN8-xjuyXifAGEEzFZp57g_sV9d-dHGvr7CjZIA/viewform',
       registerClosed: false
