@@ -785,6 +785,266 @@
     .footer-inner{ grid-template-columns: 1fr 1fr; }
   }
 </style>
+
+<style>
+  /* ================= ENHANCED ANIMATIONS & EFFECTS ================= */
+
+  /* Page load fade-in */
+  body{ animation: page-fade-in .7s ease; }
+  @keyframes page-fade-in{ from{ opacity:0; } to{ opacity:1; } }
+
+  /* Scroll progress bar */
+  .scroll-progress{
+    position: fixed; top:0; left:0; height:3px; width:0%;
+    background: linear-gradient(90deg, var(--red), #ff7a7a, var(--red));
+    background-size: 200% 100%;
+    z-index: 999;
+    transition: width .12s ease-out;
+    animation: progress-shimmer 3s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes progress-shimmer{ 0%{ background-position:0% 0; } 100%{ background-position:200% 0; } }
+
+  /* Navbar reacts to scroll */
+  nav{ transition: box-shadow .35s ease, padding .35s ease, backdrop-filter .35s ease; }
+  nav.scrolled{
+    box-shadow: 0 10px 34px -16px rgba(0,0,0,0.35);
+    padding-top:9px; padding-bottom:9px;
+  }
+
+  /* Ambient floating blobs */
+  .ambient-blob{
+    position:fixed; border-radius:50%; filter: blur(90px); z-index:0; pointer-events:none;
+    opacity:.22; mix-blend-mode: normal;
+    animation: blob-float 16s ease-in-out infinite;
+  }
+  html.dark .ambient-blob{ opacity:.28; }
+  .ambient-blob.b1{ width:380px; height:380px; background: var(--red); top:-120px; left:-120px; }
+  .ambient-blob.b2{ width:320px; height:320px; background:#5b6dff; bottom:-100px; right:-80px; animation-delay:4s; animation-duration:19s; }
+  @keyframes blob-float{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(50px,-40px) scale(1.18); }
+  }
+
+  /* Hero cursor-follow spotlight */
+  .hero-spotlight{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background: radial-gradient(circle 340px at var(--mx,50%) var(--my,20%), rgba(228,32,42,0.18), transparent 70%);
+  }
+
+  /* Animated gradient shimmer for red accent text */
+  .headline .dynamic-word,
+  .about-text h2 em,
+  .section-head h2 em,
+  .team-page-topbar h1 em,
+  .events-page-inner h1 em,
+  .contact-page-inner h1 em{
+    background: linear-gradient(90deg, var(--red), #ff8a8a, var(--red));
+    background-size: 220% auto;
+    -webkit-background-clip: text; background-clip:text; -webkit-text-fill-color:transparent;
+    animation: gradient-flow 3.5s linear infinite;
+  }
+  @keyframes gradient-flow{ 0%{ background-position:0% center; } 100%{ background-position:220% center; } }
+
+  /* Scroll-reveal utility (applied via JS) */
+  .reveal{
+    opacity:0; transform: translateY(38px);
+    transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1);
+    transition-delay: calc(var(--stagger-i, 0) * 80ms);
+  }
+  .reveal.revealed{ opacity:1; transform: translateY(0); }
+
+  /* Buttons: shine sweep + soft pulse glow */
+  .btn-primary, .btn-ghost, .filter-chip{ position:relative; overflow:hidden; }
+  .btn-primary::after, .btn-ghost::after{
+    content:''; position:absolute; top:0; left:-130%; width:55%; height:100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg);
+    transition: left .65s ease;
+    pointer-events:none;
+  }
+  .btn-primary:hover::after, .btn-ghost:hover::after{ left:135%; }
+  .btn-primary{ animation: pulse-glow 2.8s ease-in-out infinite; }
+  @keyframes pulse-glow{
+    0%,100%{ box-shadow: 0 10px 30px -8px rgba(228,32,42,0.55); }
+    50%{ box-shadow: 0 12px 42px -4px rgba(228,32,42,0.85); }
+  }
+
+  /* Click ripple effect */
+  .ui-ripple{
+    position:absolute; border-radius:50%; transform:scale(0);
+    background: rgba(255,255,255,0.55);
+    animation: ripple-anim .65s ease-out;
+    pointer-events:none;
+  }
+  html:not(.dark) .filter-chip .ui-ripple{ background: rgba(228,32,42,0.25); }
+  @keyframes ripple-anim{ to{ transform:scale(3.2); opacity:0; } }
+
+  /* Feature icon playful hover (kept for any future feature cards) */
+  .feature-icon{ transition: transform .4s cubic-bezier(.34,1.56,.64,1), background .3s ease, color .3s ease; }
+  .feature-card:hover .feature-icon{ transform: rotate(-8deg) scale(1.15); background: var(--red); color:#fff; }
+
+  /* Team / event photo zoom on hover */
+  .team-photo, .event-card-banner{ overflow:hidden; }
+  .team-photo img, .event-card-banner-img{ transition: transform .55s cubic-bezier(.22,1,.36,1); }
+  .team-card:hover .team-photo img, .event-card:hover .event-card-banner-img{ transform: scale(1.1); }
+
+  /* Card glow-ring sweep on hover */
+  .team-card, .event-card, .contact-table-wrap{ position:relative; }
+  .team-card::after, .event-card::after{
+    content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    background: linear-gradient(120deg, transparent, rgba(228,32,42,0.55), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity:0; transition: opacity .4s ease;
+    pointer-events:none;
+  }
+  .team-card:hover::after, .event-card:hover::after{ opacity:1; }
+
+  /* Dynamically-inserted event cards animate in */
+  .event-card{ animation: card-in .6s cubic-bezier(.22,1,.36,1) backwards; }
+  .events-grid .event-card:nth-child(3n+1){ animation-delay:.02s; }
+  .events-grid .event-card:nth-child(3n+2){ animation-delay:.1s; }
+  .events-grid .event-card:nth-child(3n+3){ animation-delay:.18s; }
+  @keyframes card-in{ from{ opacity:0; transform: translateY(26px) scale(.97); } to{ opacity:1; transform: translateY(0) scale(1); } }
+
+  /* Dynamically-inserted contact rows animate in */
+  .contact-table tbody tr{ animation: row-in .55s ease backwards; }
+  .contact-table tbody tr:nth-child(1){ animation-delay:.03s; }
+  .contact-table tbody tr:nth-child(2){ animation-delay:.08s; }
+  .contact-table tbody tr:nth-child(3){ animation-delay:.13s; }
+  .contact-table tbody tr:nth-child(4){ animation-delay:.18s; }
+  .contact-table tbody tr:nth-child(5){ animation-delay:.23s; }
+  .contact-table tbody tr:nth-child(6){ animation-delay:.28s; }
+  .contact-table tbody tr:nth-child(n+7){ animation-delay:.33s; }
+  @keyframes row-in{ from{ opacity:0; transform: translateX(-18px); } to{ opacity:1; transform: translateX(0); } }
+  .contact-avatar{ transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+  .contact-table tbody tr:hover .contact-avatar{ transform: scale(1.12) rotate(-4deg); }
+
+  /* Filter chip pop on select */
+  .filter-chip.active{ animation: chip-pop .4s ease; }
+  @keyframes chip-pop{ 0%{ transform:scale(.9); } 60%{ transform:scale(1.07); } 100%{ transform:scale(1); } }
+
+  /* Modal entrance animation */
+  .event-modal{ animation: modal-in .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes modal-in{ from{ opacity:0; transform: translateY(26px) scale(.96); } to{ opacity:1; transform: translateY(0) scale(1); } }
+
+  /* Gallery caption slide-in */
+  .gallery-caption{ animation: caption-in .6s ease; }
+  @keyframes caption-in{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform: translateY(0); } }
+
+  /* Back-to-top floating button */
+  .back-to-top{
+    position: fixed; bottom:28px; right:26px; z-index:80;
+    width:48px; height:48px; border-radius:50%;
+    background: var(--red); color:#fff; border:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; cursor:pointer;
+    box-shadow: 0 12px 32px -8px rgba(228,32,42,0.6);
+    opacity:0; visibility:hidden; transform: translateY(18px) scale(.8);
+    transition: opacity .3s ease, transform .3s cubic-bezier(.34,1.56,.64,1), visibility .3s;
+  }
+  .back-to-top.show{ opacity:1; visibility:visible; transform: translateY(0) scale(1); }
+  .back-to-top:hover{ transform: translateY(-5px) scale(1.06); }
+
+  /* Nav link hover micro-interaction */
+  .nav-links a{ transition: color .2s ease, letter-spacing .25s ease; }
+  .nav-links a:hover{ letter-spacing:0.4px; }
+
+  /* Theme toggle spin retained + slight glow on active press */
+  .theme-toggle:active{ transform: scale(.9); }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+
+<style>
+  /* ================= EXTRA-CREATIVE FX LAYER ================= */
+
+  /* ---- Magnetic elements ---- */
+  .fx-magnetic{ transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+
+  /* ---- 3D tilt cards with holographic glare ---- */
+  .fx-tilt{ transform-style: preserve-3d; will-change: transform; transition: transform .15s ease-out; }
+  .fx-glare{
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: radial-gradient(circle 140px at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.35), transparent 60%);
+    opacity:0; transition: opacity .3s ease; z-index:3;
+  }
+  .fx-tilt:hover .fx-glare{ opacity:1; }
+  html.dark .fx-glare{ background: radial-gradient(circle 140px at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.18), transparent 60%); }
+
+  /* ---- Headline glitch on hover ---- */
+  .headline .fixed-word{ position:relative; display:inline-block; cursor:default; }
+  .headline .fixed-word:hover{ animation: glitch-shift .35s steps(2) infinite; }
+  .headline .fixed-word:hover::before,
+  .headline .fixed-word:hover::after{
+    content: attr(data-text); position:absolute; left:0; top:0; width:100%; overflow:hidden;
+  }
+  .headline .fixed-word:hover::before{ color:#00e5ff; clip-path: inset(0 0 55% 0); animation: glitch-1 .5s infinite linear alternate-reverse; }
+  .headline .fixed-word:hover::after{ color: var(--red); clip-path: inset(45% 0 0 0); animation: glitch-2 .5s infinite linear alternate-reverse; }
+  @keyframes glitch-shift{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-1px,1px); } }
+  @keyframes glitch-1{ 0%{ transform:translate(0,0); } 20%{ transform:translate(-2px,1px); } 40%{ transform:translate(2px,-1px); } 60%{ transform:translate(-1px,-1px); } 80%{ transform:translate(1px,1px); } 100%{ transform:translate(0,0); } }
+  @keyframes glitch-2{ 0%{ transform:translate(0,0); } 20%{ transform:translate(2px,-1px); } 40%{ transform:translate(-2px,1px); } 60%{ transform:translate(1px,1px); } 80%{ transform:translate(-1px,-1px); } 100%{ transform:translate(0,0); } }
+
+  /* ---- Neon flicker for eyebrow labels ---- */
+  .eyebrow{ animation: neon-flicker 6s ease-in-out infinite; }
+  @keyframes neon-flicker{
+    0%,3%,6%,100%{ opacity:1; text-shadow: 0 0 10px rgba(228,32,42,0.35); }
+    4%{ opacity:.55; text-shadow:none; }
+    5%{ opacity:1; }
+  }
+
+  /* ---- Scramble-in text ---- */
+  .fx-scramble{ display:inline-block; }
+
+  /* ---- Circuit-trace SVG accents in hero ---- */
+  .fx-circuit{ position:absolute; z-index:1; pointer-events:none; opacity:.55; }
+  .fx-circuit.fx-tl{ top:18px; left:18px; width:180px; height:120px; }
+  .fx-circuit.fx-br{ bottom:18px; right:18px; width:200px; height:130px; transform:rotate(180deg); }
+  .fx-circuit path{ fill:none; stroke: var(--red); stroke-width:1.4; stroke-dasharray: 6 5; animation: circuit-flow 3.5s linear infinite; opacity:.55; }
+  .fx-circuit circle{ fill: var(--red); animation: circuit-pulse 2.4s ease-in-out infinite; }
+  @keyframes circuit-flow{ to{ stroke-dashoffset: -110; } }
+  @keyframes circuit-pulse{ 0%,100%{ opacity:.3; r:2.4; } 50%{ opacity:1; r:3.6; } }
+
+  /* ---- Spark burst particles ---- */
+  .fx-spark{
+    position:fixed; z-index:9998; pointer-events:none; border-radius:1px;
+    background: var(--red);
+    animation: fx-spark-fly .6s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes fx-spark-fly{
+    to{ transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0); opacity:0; }
+  }
+
+  /* ---- Emoji confetti burst ---- */
+  .fx-confetti{
+    position:fixed; z-index:9998; pointer-events:none; font-size:20px;
+    animation: fx-confetti-fall 1.4s ease-in forwards;
+  }
+  @keyframes fx-confetti-fall{
+    0%{ transform: translate(0,0) rotate(0deg); opacity:1; }
+    100%{ transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity:0; }
+  }
+
+  /* ---- Register / hero CTA extra shimmer ring on hover ---- */
+  .btn-primary{ position:relative; isolation:isolate; }
+  .btn-primary::before{
+    content:''; position:absolute; inset:-3px; border-radius:999px; z-index:-1;
+    background: conic-gradient(from 0deg, var(--red), #ff8a8a, #00e5ff, var(--red));
+    opacity:0; transition: opacity .3s ease; filter: blur(6px);
+    animation: spin-ring 3s linear infinite;
+  }
+  .btn-primary:hover::before{ opacity:.75; }
+  @keyframes spin-ring{ to{ transform: rotate(360deg); } }
+</style>
 </head>
 <body><div id="home-content"><header class="nav-wrap">
 <nav>
@@ -817,7 +1077,7 @@
 <div class="hero-inner">
 <div class="eyebrow">CENTRAL UNIVERSITY OF JAMMU · e-YANTRA</div>
 <h1 class="headline">
-<span class="fixed-word">Build</span><span class="dynamic-word"><span id="typeTarget"></span><span class="cursor-bar"></span></span>
+<span class="fixed-word" data-text="Build">Build</span><span class="dynamic-word"><span id="typeTarget"></span><span class="cursor-bar"></span></span>
 </h1>
 <p class="hero-sub">We are a community of builders, dreamers and engineers turning bold ideas into working machines — one prototype at a time.</p>
 <div class="hero-cta">
@@ -934,8 +1194,8 @@
 <div class="register-brand-sub">A student technical club under the Dept. of Computer Science &amp; Engineering, School of Engineering &amp; Technology, in partnership with e-Yantra.</div>
 <div class="register-socials">
 <a href="#">Email</a>
-<a href="https://www.instagram.com/eyantra.cujammu/">Instagram</a>
-<a href="#">LinkedIn</a>
+<a href="https://www.instagram.com/robotics.club.cuj/">Instagram</a>
+<a href="https://www.linkedin.com/in/robotics-club-x-e-yantra-central-university-of-jammu-6722ba435/">LinkedIn</a>
 </div>
 </div>
 <div class="register-address">
@@ -1432,7 +1692,7 @@
       id: 'freshers-orientation',
       title: "Freshers' Orientation",
       category: 'workshop',
-      status: 'upcoming',
+      status: 'past',
       date: '9th September, 2026',
       time: 'TBA',
       location: 'Pre-Fabricated Building, CUJ',
@@ -1440,13 +1700,13 @@
       image: 'images/fresherorientation.jpg',
       description: "A welcome session for all incoming freshers to introduce them to the Robotics Club — our projects, teams and what it takes to get started in robotics at CUJ. Meet the mentors, student leadership and current members.",
       registerUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdfVvAW9ODaN8-xjuyXifAGEEzFZp57g_sV9d-dHGvr7CjZIA/viewform',
-      registerClosed: false
+      registerClosed: true
     },
     {
       id: 'robotraverse',
       title: 'RoboTraverse',
       category: 'competition',
-      status: 'upcoming',
+      status: 'past',
       date: '2026-09-11',
       time: 'TBA',
       location: 'Pre-Fabricated Building, CUJ',
@@ -1454,7 +1714,7 @@
       image: 'images/robotraverse.jpeg',
       description: 'RoboTraverse challenges teams to build and navigate a robot through a tricky obstacle course, testing speed, precision and control under pressure. Open to all members of the Robotics Club.',
       registerUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfe98bBi9WJXsWf4lTiAoeEpdIazUvNge2ekxIhLXGgt2qPPQ/viewform?usp=send_form',
-      registerClosed: false
+      registerClosed: true
     },
     {
       id: 'robosoccer',
@@ -1623,6 +1883,308 @@
       a.closest('.nav-links').classList.remove('open');
     });
   });
+})();
+</script>
+<script>
+(function(){
+  /* ================= ENHANCED ANIMATIONS & EFFECTS JS ================= */
+
+  /* ---- Scroll progress bar ---- */
+  var progressBar = document.createElement('div');
+  progressBar.className = 'scroll-progress';
+  document.body.appendChild(progressBar);
+  function updateProgress(){
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+
+  /* ---- Navbar scrolled state ---- */
+  var navEls = document.querySelectorAll('nav');
+  function updateNav(){
+    var scrolled = window.scrollY > 24;
+    navEls.forEach(function(n){ n.classList.toggle('scrolled', scrolled); });
+  }
+
+  /* ---- Back-to-top button ---- */
+  var backBtn = document.createElement('button');
+  backBtn.className = 'back-to-top';
+  backBtn.setAttribute('aria-label', 'Back to top');
+  backBtn.innerHTML = '&#8593;';
+  document.body.appendChild(backBtn);
+  backBtn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  function updateBackBtn(){
+    backBtn.classList.toggle('show', window.scrollY > 480);
+  }
+
+  var scrollTicking = false;
+  window.addEventListener('scroll', function(){
+    if(scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(function(){
+      updateProgress();
+      updateNav();
+      updateBackBtn();
+      scrollTicking = false;
+    });
+  }, { passive: true });
+  updateProgress(); updateNav(); updateBackBtn();
+
+  /* ---- Ambient floating background blobs ---- */
+  var blob1 = document.createElement('div'); blob1.className = 'ambient-blob b1';
+  var blob2 = document.createElement('div'); blob2.className = 'ambient-blob b2';
+  document.body.appendChild(blob1);
+  document.body.appendChild(blob2);
+
+  /* ---- Hero cursor-follow spotlight ---- */
+  var hero = document.querySelector('.hero');
+  if(hero){
+    var spotlight = document.createElement('div');
+    spotlight.className = 'hero-spotlight';
+    hero.appendChild(spotlight);
+    hero.addEventListener('mousemove', function(e){
+      var r = hero.getBoundingClientRect();
+      var mx = ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%';
+      var my = ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%';
+      spotlight.style.setProperty('--mx', mx);
+      spotlight.style.setProperty('--my', my);
+    });
+  }
+
+  /* ---- Click ripple effect on buttons / chips ---- */
+  document.addEventListener('click', function(e){
+    var target = e.target.closest('.btn-primary, .btn-ghost, .filter-chip');
+    if(!target) return;
+    var rect = target.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var ripple = document.createElement('span');
+    ripple.className = 'ui-ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    setTimeout(function(){ ripple.remove(); }, 650);
+  });
+
+  /* ---- Scroll-reveal for static content ---- */
+  var revealSelectors = [
+    '.section-head', '.about-text', '.video-frame', '.team-row-label',
+    '.team-grid', '.register-brand', '.register-address', '.register-qr',
+    '.team-page-topbar', '.events-page-inner .eyebrow', '.events-page-inner h1',
+    '.events-page-inner-sub', '.events-filter-row',
+    '.contact-page-inner .eyebrow', '.contact-page-inner h1',
+    '.contact-page-inner-sub', '.contact-table-wrap'
+  ];
+  var revealObserver = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }) : null;
+
+  function initReveal(){
+    var els = document.querySelectorAll(revealSelectors.join(','));
+    els.forEach(function(el, i){
+      if(el.dataset.revealInit) return;
+      el.dataset.revealInit = '1';
+      el.classList.add('reveal');
+      el.style.setProperty('--stagger-i', i % 6);
+      if(revealObserver){
+        revealObserver.observe(el);
+      } else {
+        el.classList.add('revealed');
+      }
+    });
+  }
+  initReveal();
+
+  /* Re-scan for newly revealed elements when routes/sections change,
+     throttled so it doesn't run on every minor DOM tweak (ticker/gallery). */
+  var reScanQueued = false;
+  function queueReveal(){
+    if(reScanQueued) return;
+    reScanQueued = true;
+    setTimeout(function(){ initReveal(); reScanQueued = false; }, 120);
+  }
+  new MutationObserver(queueReveal).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+<script>
+(function(){
+  /* ================= EXTRA-CREATIVE FX ENGINE ================= */
+  var isFinePointer = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* ---------- Magnetic pull for buttons/controls ---------- */
+  if(isFinePointer){
+    var magSelectors = '.btn-primary, .btn-ghost, .theme-toggle, .back-to-top, .gallery-arrow';
+    document.querySelectorAll(magSelectors).forEach(function(el){ el.classList.add('fx-magnetic'); });
+    document.addEventListener('mousemove', function(e){
+      document.querySelectorAll('.fx-magnetic').forEach(function(el){
+        var r = el.getBoundingClientRect();
+        var cx = r.left + r.width/2, cy = r.top + r.height/2;
+        var dx = e.clientX - cx, dy = e.clientY - cy;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        var radius = 70;
+        if(dist < radius){
+          var pull = (1 - dist/radius) * 0.35;
+          el.style.transform = 'translate(' + (dx*pull) + 'px,' + (dy*pull) + 'px)';
+        } else {
+          el.style.transform = '';
+        }
+      });
+    });
+    // Re-apply to buttons that get created dynamically (e.g. modal register button already exists statically)
+  }
+
+  /* ---------- 3D tilt + glare on cards ---------- */
+  function attachTilt(el){
+    if(el.dataset.fxTilt) return;
+    el.dataset.fxTilt = '1';
+    el.classList.add('fx-tilt');
+    var glare = document.createElement('div');
+    glare.className = 'fx-glare';
+    el.appendChild(glare);
+    el.addEventListener('mousemove', function(e){
+      var r = el.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;
+      var py = (e.clientY - r.top) / r.height;
+      var rx = (py - 0.5) * -10;
+      var ry = (px - 0.5) * 10;
+      el.style.transform = 'perspective(700px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-6px)';
+      glare.style.setProperty('--gx', (px*100) + '%');
+      glare.style.setProperty('--gy', (py*100) + '%');
+    });
+    el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+  }
+  function initTilts(){
+    if(!isFinePointer) return;
+    document.querySelectorAll('.team-card, .event-card').forEach(attachTilt);
+  }
+  initTilts();
+
+  /* ---------- Text scramble-in for eyebrows / row labels ---------- */
+  var SCRAMBLE_CHARS = '!<>-_\\/[]{}—=+*^?#01';
+  function scrambleText(el){
+    if(el.dataset.fxScrambled) return;
+    el.dataset.fxScrambled = '1';
+    var final = el.textContent;
+    var len = final.length;
+    if(len === 0 || len > 60) return;
+    var frame = 0;
+    var totalFrames = 14;
+    var interval = setInterval(function(){
+      frame++;
+      var out = '';
+      for(var i=0;i<len;i++){
+        if(i < (frame/totalFrames)*len){
+          out += final[i];
+        } else if(final[i] === ' '){
+          out += ' ';
+        } else {
+          out += SCRAMBLE_CHARS[Math.floor(Math.random()*SCRAMBLE_CHARS.length)];
+        }
+      }
+      el.textContent = out;
+      if(frame >= totalFrames){
+        el.textContent = final;
+        clearInterval(interval);
+      }
+    }, 28);
+  }
+  var scrambleTargets = document.querySelectorAll('.eyebrow, .team-row-label');
+  var scrambleObserver = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        scrambleText(entry.target);
+        scrambleObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 }) : null;
+  scrambleTargets.forEach(function(el){
+    if(scrambleObserver) scrambleObserver.observe(el); else scrambleText(el);
+  });
+
+  /* ---------- Circuit-trace SVG accents in hero ---------- */
+  var heroEl = document.querySelector('.hero');
+  if(heroEl){
+    var circuitSVG =
+      '<svg class="fx-circuit fx-tl" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M2 60 H50 L65 40 H120 L135 55 H178"/>' +
+        '<circle cx="65" cy="40" r="3"/><circle cx="135" cy="55" r="3"/>' +
+      '</svg>' +
+      '<svg class="fx-circuit fx-br" viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M2 70 H60 L78 95 H140 L158 65 H198"/>' +
+        '<circle cx="78" cy="95" r="3"/><circle cx="158" cy="65" r="3"/>' +
+      '</svg>';
+    var wrap = document.createElement('div');
+    wrap.innerHTML = circuitSVG;
+    while(wrap.firstChild) heroEl.appendChild(wrap.firstChild);
+  }
+
+  /* ---------- Spark burst on primary/ghost button clicks ---------- */
+  function spawnSparks(x, y){
+    var count = 10;
+    for(var i=0;i<count;i++){
+      var s = document.createElement('span');
+      s.className = 'fx-spark';
+      var angle = (Math.PI*2/count)*i + Math.random()*0.4;
+      var dist = 40 + Math.random()*50;
+      var size = 3 + Math.random()*4;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+      s.style.setProperty('--sx', Math.cos(angle)*dist + 'px');
+      s.style.setProperty('--sy', Math.sin(angle)*dist + 'px');
+      s.style.setProperty('--sr', (Math.random()*360) + 'deg');
+      document.body.appendChild(s);
+      (function(spark){ setTimeout(function(){ spark.remove(); }, 650); })(s);
+    }
+  }
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-primary, .btn-ghost, .event-modal-register');
+    if(btn) spawnSparks(e.clientX, e.clientY);
+  });
+
+  /* ---------- Emoji confetti burst for the "Join the Club" CTA ---------- */
+  var CONFETTI_EMOJI = ['⚙️','🤖','⚡','🔧','✨'];
+  function spawnConfetti(x, y){
+    var count = 16;
+    for(var i=0;i<count;i++){
+      var c = document.createElement('span');
+      c.className = 'fx-confetti';
+      c.textContent = CONFETTI_EMOJI[Math.floor(Math.random()*CONFETTI_EMOJI.length)];
+      var angle = Math.random()*Math.PI*2;
+      var dist = 60 + Math.random()*120;
+      c.style.left = x + 'px';
+      c.style.top = y + 'px';
+      c.style.setProperty('--cx', Math.cos(angle)*dist + 'px');
+      c.style.setProperty('--cy', (Math.sin(angle)*dist + 80) + 'px');
+      c.style.setProperty('--cr', (Math.random()*720-360) + 'deg');
+      document.body.appendChild(c);
+      (function(conf){ setTimeout(function(){ conf.remove(); }, 1450); })(c);
+    }
+  }
+  document.addEventListener('click', function(e){
+    var joinLink = e.target.closest('a[href*="forms.gle"], a[href*="docs.google.com/forms"]');
+    if(joinLink){
+      var r = joinLink.getBoundingClientRect();
+      spawnConfetti(r.left + r.width/2, r.top + r.height/2);
+    }
+  });
+
+  /* ---------- Re-scan for new cards after route/filter changes ---------- */
+  var tiltRescan = false;
+  new MutationObserver(function(){
+    if(tiltRescan) return;
+    tiltRescan = true;
+    setTimeout(function(){ initTilts(); tiltRescan = false; }, 150);
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 </body>
